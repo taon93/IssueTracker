@@ -1,0 +1,81 @@
+// COLOR PALETTE:
+//    #F7F7F2
+//    #E4E6C3
+//    #899878
+//    #222725
+//    #121113
+
+$theme-colors: (
+  "primary": #F7F7F2
+);
+
+@import "../../../IssueTrackerClient/node_modules/bootstrap/scss/bootstrap";
+
+.dropdown-menu {
+  background-color: #899878;
+  color: #f7f7f2;
+}
+html {
+  height: 95%;
+  margin: 0;
+  padding: 0;
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #F7F7F2;
+  }
+  .content {
+    height: 85%;
+    width: auto;
+    overflow-x: visible;
+    background-color: #121113;
+    min-height: 9em;
+  }
+  .issue-board {
+    .state-column {
+      color: #899878;
+      background-color: #222725;
+      min-width: 15em;
+      max-width: 15em;
+      .state-column-header {
+        height: 3em;
+      }
+      .state-issues {
+        height: 100%;
+        overflow: auto;
+
+        .issue {
+          background-color: #899878;
+          color: #f7f7f2;
+          cursor: grab;
+          .issue-name {
+            font-size: 1em;
+          }
+          .menu
+          {
+            .meatballs-menu {
+              cursor: pointer;
+              .meatballs-icon {
+                fill: #0c63e4;
+              }
+            }
+            .internal-issue-menu {
+              font-size: 0.5em;
+            }
+          }
+          .hours {
+            font-size: 0.5em;
+          }
+          .other {
+            font-size: 0.7em;
+          }
+        }
+      }
+      .state-add-issue {
+        cursor: pointer;
+        height: 3em;
+      }
+    }
+  }
+}

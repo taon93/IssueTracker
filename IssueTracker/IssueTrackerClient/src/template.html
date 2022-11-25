@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Issue Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="content flex-grow-1 p-2 h-100">
+        <div class="container-fluid issue-board p-3 m-1 h-100">
+            <div class="row row-cols-4 gx-3 flex-nowrap h-100 main-row">
+                <div class="state-column col-3 border-1 border-primary h-100 mx-2 rounded">
+                    <div class="d-flex flex-column h-100">
+                        <div class="flex-shrink-0 state-column-header">
+                            <h3><span id="column-name"></span></h3>
+                        </div>
+                        <div class="flex-shrink-1 state-issues">
+                        </div>
+                        <div class="flex-shrink-0">
+                            <button type="button" class="btn btn-primary btn-sm add-item-button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#add-edit-item-modal">
+                                <i class="fa-regular fa-square-plus"></i>
+                                Add Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODALS -->
+    <!-- LOG HOURS -->
+    <div class="modal modal modal-main fade" tabindex="-1" aria-labelledby="new-issue-label" aria-hidden="true" id="log-hours-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="log-hours-form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="new-issue-label">
+                            Log Hours to:
+                            <span class="name-to-log-to"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-2">
+                            <div class="col">
+                                Initial Estimate: <span class="initial-estimate"></span>
+                            </div>
+                            <div class="col">
+                                Already Logged: <span class="already-logged"></span>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control number-input" id="hours-to-log" placeholder="plch">
+                            <label for="hours-to-log">Estimated time</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Log Hours</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- ADD/EDIT ITEM -->
+    <div class="modal modal-main fade" tabindex="-1" aria-labelledby="add-edit-item-label" aria-hidden="true" id="add-edit-item-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="add-modify-item-form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-edit-item-label">
+                            <span class="modal-mode-name"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="issue-name-input" placeholder="plch">
+                            <label for="issue-name-input">Item name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control number-input" id="estimated-time-input" placeholder="plch">
+                            <label for="estimated-time-input">Estimated time</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control number-input" id="effort-logged-input" placeholder="plch">
+                            <label for="effort-logged-input">Logged Effort</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="assigned-to-input" placeholder="plch">
+                            <label for="assigned-to-input">Assigned to</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
