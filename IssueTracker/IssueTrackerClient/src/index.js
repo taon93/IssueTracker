@@ -31,8 +31,8 @@ function getItemsFromServer() {
     axios.get(apiPath).then(res => initializeItems(res.data));
 }
 
-function postItemOnServer(item) {
-    axios.post(apiPath + item.id.replace('item-', ''), item.inputs).then(res => console.log(res));
+function postItemOnServer(itemId) {
+    axios.post(apiPath + itemId.replace('item-', ''), allItems.get(itemId)).then(res => console.log(res));
 }
 
 function initializeItems(jsonItems) {
@@ -45,11 +45,11 @@ function initializeItems(jsonItems) {
             loggedEffort: item.loggedEffort,
             assignedTo: item.assignedTo
         };
-
-        allItems.set(getDomElementFromId(item.id), issueState);
-        createCardItem();
+        const id = getDomElementFromId(item.id);
+        allItems.set(id, issueState);
 
         const itemDomElement = createCardItem();
+        assignIdToTheItem(itemDomElement, id);
         addEventListenersForDropdownMenuOfTheItem(itemDomElement);
         addDraggingBetweenColumnsForItem(itemDomElement);
         fillCard(itemDomElement, issueState);
@@ -133,7 +133,7 @@ function processItemDraggedOverColumn(event, column) {
 
     itemAfter === null ? column.appendChild(draggedItem) : column.insertBefore(draggedItem, itemAfter);
     const elem = allItems.get(draggedItem.id);
-    elem.columnId = column.id;
+    elem.assignedColumn = column.id;
 }
 
 function getItemDirectlyAfter(column, positionY) {
@@ -157,8 +157,13 @@ function changeColumnToIdName(columnName) {
     return columnName.toLowerCase().replace(' ', '-');
 }
 
+function assignIdToTheItem(item, id) {
+    item.id = id;
+}
+
 function addNewItem(event) {
     const item = createCardItem();
+    assignIdToTheItem(item, getNextIdForTheItem())
     addStatusOfCurrentlyEditedToItem(item);
     addEventListenersForDropdownMenuOfTheItem(item);
     addDraggingBetweenColumnsForItem(item);
@@ -176,7 +181,6 @@ function addNewItem(event) {
 
 function createCardItem() {
     const item = document.createElement('div');
-    item.id = getNextIdForTheItem();
     const itemClassList = ['card', 'issue', 'p-2', 'm-2', 'd-none'];
     item.classList.add(...itemClassList);
     item.setAttribute('draggable', 'true');
@@ -278,7 +282,9 @@ function removeStatusOfCurrentlyEditedFromItem(item) {
 
 function addDraggingBetweenColumnsForItem(item) {
     item.addEventListener('dragstart', () => addStatusOfCurrentlyEditedToItem(item));
-    item.addEventListener('dragend', () => removeStatusOfCurrentlyEditedFromItem(item));
+    item.addEventListener('dragend', () => {
+        removeStatusOfCurrentlyEditedFromItem(item);
+        postItemOnServer(item.id);});
 }
 
 function getInputFormTargetById(targetElem, idName) {
@@ -311,7 +317,7 @@ function fillCurrentlyEditedItemWithModalInputs(event) {
 
     const item = { id: card.id, inputs: inputs };
     updateItemList(item);
-    postItemOnServer(item);
+    postItemOnServer(item.id);
     removeStatusOfCurrentlyEditedFromItem(card);
     event.preventDefault();
 }
@@ -341,7 +347,7 @@ function updateHoursFromLogHoursModal(event) {
     const editedItem = allItems.get(item.id);
     editedItem.loggedEffort += parseInt(event.target.querySelector('#hours-to-log').value);
     item.querySelector('#logged-time').textContent = editedItem.loggedEffort;
-    // TODO: POST to server
+    postItemOnServer(item.id);
     removeStatusOfCurrentlyEditedFromItem(item);
     event.preventDefault();
 }

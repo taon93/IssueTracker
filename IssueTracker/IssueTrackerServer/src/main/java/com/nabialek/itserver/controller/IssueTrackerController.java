@@ -31,7 +31,7 @@ public class IssueTrackerController {
                 itemWithoutId.getEstimatedEffort(),
                 itemWithoutId.getLoggedEffort(),
                 itemWithoutId.getAssignedTo());
-        itemService.addItem(item);
+        itemService.addOrUpdateItem(item);
     }
 
     @GetMapping("/{itemId}")

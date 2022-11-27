@@ -22,7 +22,7 @@ public class ItemService {
         return itemRepository.findById(id).orElse(null);
     }
 
-    public void addItem(Item item) {
+    public void addOrUpdateItem(Item item) {
         itemRepository.save(item);
     }
 
