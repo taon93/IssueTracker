@@ -2,20 +2,67 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.scss';
 import axios from 'axios';
-const apiPath = 'https://jsonplaceholder.typicode.com/todos/1';
+const apiPath = 'http://localhost:8080/items/';
 
 window.allItems = new Map();
-axios.get(apiPath).then(res => console.log(res.data));
-const idGenerator = class { // This must change after introducing sever side: ids will not be added correctly
-    constructor(){}
-    static #id = 0;
-    static getNextId() {
-        return 'item-' + this.#id++;
-    }
-}
+axios.interceptors.request.use(request => {
+    console.log('Starting Request', JSON.stringify(request, null, 2))
+    return request
+})
+axios.interceptors.response.use(response => {
+    console.log('Starting Response', JSON.stringify(response.data, null, 2))
+    return response;
+})
 populateIssueBoard();
+
+function getNextIdForTheItem() {
+    return getDomElementFromId(Date.now()); //it is possible for this thing to fail
+}
+
+function getDomElementFromId(id) {
+    return 'item-' + id;
+}
+
+function deleteItemOnServer(itemId) {
+    axios.delete(apiPath + itemId.replace('item-', '')).then(res => console.log(res));
+}
+
+function getItemsFromServer() {
+    axios.get(apiPath).then(res => initializeItems(res.data));
+}
+
+function postItemOnServer(item) {
+    axios.post(apiPath + item.id.replace('item-', ''), item.inputs).then(res => console.log(res));
+}
+
+function initializeItems(jsonItems) {
+    jsonItems.forEach(item => {
+        console.log(item);
+        const issueState = {
+            itemName: item.itemName,
+            assignedColumn: item.assignedColumn,
+            estimatedEffort: item.estimatedEffort,
+            loggedEffort: item.loggedEffort,
+            assignedTo: item.assignedTo
+        };
+
+        allItems.set(getDomElementFromId(item.id), issueState);
+        createCardItem();
+
+        const itemDomElement = createCardItem();
+        addEventListenersForDropdownMenuOfTheItem(itemDomElement);
+        addDraggingBetweenColumnsForItem(itemDomElement);
+        fillCard(itemDomElement, issueState);
+        displayCard(itemDomElement);
+        const column = document.getElementById(item.assignedColumn);
+
+        column.appendChild(itemDomElement);
+    });
+}
+
 function populateIssueBoard() {
     initializeColumns();
+    getItemsFromServer();
     // Primary Events
     onClickAddNewItemToTheColumn();
     onAddEditModalSubmitFillCurrentlyEditedItemWithInputs();
@@ -121,15 +168,15 @@ function addNewItem(event) {
 
     formatAddAndEditModal('Add New Item', {
         itemName: null,
-        estimatedTime: null,
-        effortLogged: 0,
+        estimatedEffort: null,
+        loggedEffort: 0,
         assignedTo: null,
     });
 }
 
 function createCardItem() {
     const item = document.createElement('div');
-    item.id = idGenerator.getNextId();
+    item.id = getNextIdForTheItem();
     const itemClassList = ['card', 'issue', 'p-2', 'm-2', 'd-none'];
     item.classList.add(...itemClassList);
     item.setAttribute('draggable', 'true');
@@ -193,9 +240,9 @@ function logHoursToItem(event) {
     addStatusOfCurrentlyEditedToItem(item);
     const itemValues = allItems.get(item.id);
     const logHoursModal = document.querySelector('#log-hours-modal');
-    logHoursModal.querySelector('.initial-estimate').textContent = itemValues.estimatedTime;
+    logHoursModal.querySelector('.initial-estimate').textContent = itemValues.estimatedEffort;
     logHoursModal.querySelector('.name-to-log-to').textContent = itemValues.itemName;
-    logHoursModal.querySelector('.already-logged').textContent = itemValues.effortLogged;
+    logHoursModal.querySelector('.already-logged').textContent = itemValues.loggedEffort;
 }
 
 function getItemForDropdownButton(domElement) {
@@ -205,14 +252,16 @@ function getItemForDropdownButton(domElement) {
 function editExistingItemState(event) {
     const item = getItemForDropdownButton(event.target);
     addStatusOfCurrentlyEditedToItem(item);
-    formatAddAndEditModal('Edit Item', allItems.get(item.id));
+    const currentlyEditedItem = {id: item.id,
+                                 value: allItems.get(item.id)};
+    formatAddAndEditModal('Edit Item', currentlyEditedItem.value);
 }
 
 function deleteItem(event) {
     const item = getItemIdForDropdownButton(event.target);
+    deleteItemOnServer(item.id);
     allItems.delete(item.id);
     item.outerHTML = '';
-    // TODO: Server DELETE
 }
 
 function getCurrentlyEditedItem() {
@@ -244,8 +293,8 @@ function formatAddAndEditModal(mode, itemState) {
 
 function fillInputsWithFieldsFromState(modal, itemState) {
     modal.querySelector('#issue-name-input').value = itemState.itemName;
-    modal.querySelector('#estimated-time-input').value = itemState.estimatedTime;
-    modal.querySelector('#effort-logged-input').value = itemState.effortLogged;
+    modal.querySelector('#estimated-time-input').value = itemState.estimatedEffort;
+    modal.querySelector('#effort-logged-input').value = itemState.loggedEffort;
     modal.querySelector('#assigned-to-input').value = itemState.assignedTo;
 }
 
@@ -256,42 +305,42 @@ function displayCard(cardDomElement) {
 function fillCurrentlyEditedItemWithModalInputs(event) {
     const inputs = getInputsFromForm(event.target);
     const card = getCurrentlyEditedItem();
-    inputs.columnId = card.closest('.state-issues').id;
+    inputs.assignedColumn = card.closest('.state-issues').id;
     fillCard(card, inputs);
     displayCard(card);
 
     const item = { id: card.id, inputs: inputs };
-    updateItemsList(item);
-    // TODO: Post/Update to server
+    updateItemList(item);
+    postItemOnServer(item);
     removeStatusOfCurrentlyEditedFromItem(card);
     event.preventDefault();
 }
 
 function fillCard(card, inputs) {
     card.querySelector('#item-name').textContent = inputs.itemName;
-    card.querySelector('#estimated-time').textContent = inputs.estimatedTime;
-    card.querySelector('#logged-time').textContent = inputs.effortLogged;
+    card.querySelector('#estimated-time').textContent = inputs.estimatedEffort;
+    card.querySelector('#logged-time').textContent = inputs.loggedEffort;
     card.querySelector('#assigned-to').textContent = inputs.assignedTo;
 }
 
 function getInputsFromForm(form) {
     return {
         itemName: getInputFormTargetById(form, 'issue-name-input'),
-        estimatedTime: parseInt(getInputFormTargetById(form, 'estimated-time-input')),
-        effortLogged: parseInt(getInputFormTargetById(form, 'effort-logged-input')),
+        estimatedEffort: parseInt(getInputFormTargetById(form, 'estimated-time-input')),
+        loggedEffort: parseInt(getInputFormTargetById(form, 'effort-logged-input')),
         assignedTo: getInputFormTargetById(form, 'assigned-to-input')
     };
 }
 
-function updateItemsList(item) {
+function updateItemList(item) {
     allItems.set(item.id, item.inputs);
 }
 
 function updateHoursFromLogHoursModal(event) {
     const item = getCurrentlyEditedItem();
     const editedItem = allItems.get(item.id);
-    editedItem.effortLogged += parseInt(event.target.querySelector('#hours-to-log').value);
-    item.querySelector('#logged-time').textContent = editedItem.effortLogged;
+    editedItem.loggedEffort += parseInt(event.target.querySelector('#hours-to-log').value);
+    item.querySelector('#logged-time').textContent = editedItem.loggedEffort;
     // TODO: POST to server
     removeStatusOfCurrentlyEditedFromItem(item);
     event.preventDefault();
