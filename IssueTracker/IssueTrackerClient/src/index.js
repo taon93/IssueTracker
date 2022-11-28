@@ -199,7 +199,7 @@ function createItemDomElementTemplate() {
             <div class="dropdown">
               <i class="p-0 fa-solid fa-ellipsis meatballs-menu" 
                 type="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-              <ul class="dropdown-menu internal-issue-menu">
+              <ul class="dropdown-menu bg-secondary internal-issue-menu">
                 <li><a class="dropdown-item" id="log-hours" 
                     href="#" data-bs-toggle="modal" data-bs-target="#log-hours-modal">Log Hours</a></li>
                 <li><a class="dropdown-item" id="edit-item" 

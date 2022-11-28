@@ -11,18 +11,28 @@
           crossorigin="anonymous"
           referrerpolicy="no-referrer" />
 </head>
-<body>
-    <div class="content flex-grow-1 p-2 h-100">
+<body class="bg-dark">
+    <nav class="navbar navbar-primary bg-primary">
+        <div class="container-fluid justify-content-between">
+            <div class="col main-header">
+                <span class="navbar-brand mx-3 my-1 h1">Issue Tracker</span>
+            </div>
+            <div class="col align-self-end">
+                <button class="btn btn-secondary">Clear All Issues</button>
+            </div>
+        </div>
+    </nav>
+    <div class="content flex-grow-1 p-2">
         <div class="container-fluid issue-board p-3 m-1 h-100">
             <div class="row row-cols-4 gx-3 flex-nowrap h-100 main-row">
-                <div class="state-column col-3 border-1 border-primary h-100 mx-2 rounded">
+                <div class="state-column col-3 h-100 mx-2 rounded">
                     <div class="d-flex flex-column h-100">
                         <div class="flex-shrink-0 state-column-header">
                             <h3><span id="column-name"></span></h3>
                         </div>
                         <div class="flex-shrink-1 state-issues">
                         </div>
-                        <div class="flex-shrink-0">
+                        <div class="flex-shrink-0 mb-1 align-self-end">
                             <button type="button" class="btn btn-primary btn-sm add-item-button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#add-edit-item-modal">
@@ -37,7 +47,7 @@
     </div>
     <!-- MODALS -->
     <!-- LOG HOURS -->
-    <div class="modal modal modal-main fade" tabindex="-1" aria-labelledby="new-issue-label" aria-hidden="true" id="log-hours-modal">
+    <div class="modal modal-main fade" tabindex="-1" aria-labelledby="new-issue-label" aria-hidden="true" id="log-hours-modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form class="log-hours-form">
@@ -58,12 +68,12 @@
                             </div>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control number-input" id="hours-to-log" placeholder="plch">
+                            <input type="number" class="form-control number-input bg-muted" id="hours-to-log" placeholder="plch">
                             <label for="hours-to-log">Estimated time</label>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Log Hours</button>
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Log Hours</button>
                     </div>
                 </form>
             </div>
@@ -82,25 +92,25 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="issue-name-input" placeholder="plch">
+                            <input type="text" class="form-control bg-muted" id="issue-name-input" placeholder="plch">
                             <label for="issue-name-input">Item name</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control number-input" id="estimated-time-input" placeholder="plch">
+                            <input type="number" class="form-control number-input bg-muted" id="estimated-time-input" placeholder="plch">
                             <label for="estimated-time-input">Estimated time</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control number-input" id="effort-logged-input" placeholder="plch">
+                            <input type="number" class="form-control number-input bg-muted" id="effort-logged-input" placeholder="plch">
                             <label for="effort-logged-input">Logged Effort</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="assigned-to-input" placeholder="plch">
+                            <input type="text" class="form-control bg-muted" id="assigned-to-input" placeholder="plch">
                             <label for="assigned-to-input">Assigned to</label>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Save changes</button>
                     </div>
                 </form>
             </div>

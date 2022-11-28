@@ -1,19 +1,32 @@
-// COLOR PALETTE:
-//    #F7F7F2
-//    #E4E6C3
-//    #899878
-//    #222725
-//    #121113
-
 $theme-colors: (
-  "primary": #F7F7F2
+  "primary": #E4E6C3,
+  "secondary": #899878,
+  "dark": #121113,
+  "light": #F7F7F2,
+  "muted": #222725
 );
 
+$modal-content-border-color: map-get($theme-colors, "secondary");
+$modal-content-bg: (map-get($theme-colors, "dark"));
+$modal-content-color: (map-get($theme-colors, "secondary"));
+$btn-close-color: map-get($theme-colors, "secondary");
+$modal-footer-border-color: map-get($theme-colors, "secondary");
+$modal-header-border-color: map-get($theme-colors, "secondary");
+.modal {
+  .form-control {
+    color: map-get($theme-colors, "primary") !important;
+    border-style: none;
+  }
+}
 @import "../../../IssueTrackerClient/node_modules/bootstrap/scss/bootstrap";
+.navbar {
+  .main-header {
+    color: map-get($theme-colors, "secondary") !important;
+  }
 
+}
 .dropdown-menu {
-  background-color: #899878;
-  color: #f7f7f2;
+  .dropdown-item { color: map-get($theme-colors, "dark")}
 }
 html {
   height: 95%;
@@ -23,21 +36,20 @@ html {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #F7F7F2;
   }
   .content {
     height: 85%;
     width: auto;
     overflow-x: visible;
-    background-color: #121113;
     min-height: 9em;
   }
   .issue-board {
     .state-column {
-      color: #899878;
-      background-color: #222725;
+      color: map-get($theme-colors, "secondary");
+      background-color: map-get($theme-colors, "muted");
       min-width: 15em;
       max-width: 15em;
+      border: 1px solid map-get($theme-colors, "secondary");
       .state-column-header {
         height: 3em;
       }
@@ -46,8 +58,8 @@ html {
         overflow: auto;
 
         .issue {
-          background-color: #899878;
-          color: #f7f7f2;
+          background-color: map-get($theme-colors, "secondary");
+          color: map-get($theme-colors, "light");
           cursor: grab;
           .issue-name {
             font-size: 1em;
@@ -72,9 +84,13 @@ html {
           }
         }
       }
-      .state-add-issue {
+      .add-item-button {
         cursor: pointer;
-        height: 3em;
+        height: 2em;
+        background-color: map-get($theme-colors, "muted");
+        border-style: none;
+        outline-style: none;
+        color: map-get($theme-colors, "secondary");
       }
     }
   }
